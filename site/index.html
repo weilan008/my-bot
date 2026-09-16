@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>my-bot</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="card">
+      <p class="eyebrow">weilan008 / my-bot</p>
+      <h1>my-bot</h1>
+      <p class="lede">Deployed with GitHub Actions to GitHub Pages.</p>
+      <ul>
+        <li>Pushes to <code>main</code> publish this site</li>
+        <li>Source lives in the <code>site/</code> folder</li>
+        <li>Workflow: <code>.github/workflows/deploy-pages.yml</code></li>
+      </ul>
+      <p class="status" id="status">Site is up.</p>
+    </main>
+    <script>
+      document.getElementById("status").textContent =
+        "Site is up · " + new Date().toLocaleString();
+    </script>
+  </body>
+</html>
