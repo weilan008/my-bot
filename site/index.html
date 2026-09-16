@@ -1,26 +1,248 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>my-bot</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <main class="card">
-      <p class="eyebrow">weilan008 / my-bot</p>
-      <h1>my-bot</h1>
-      <p class="lede">Deployed with GitHub Actions to GitHub Pages.</p>
-      <ul>
-        <li>Pushes to <code>main</code> publish this site</li>
-        <li>Source lives in the <code>site/</code> folder</li>
-        <li>Workflow: <code>.github/workflows/deploy-pages.yml</code></li>
-      </ul>
-      <p class="status" id="status">Site is up.</p>
-    </main>
-    <script>
-      document.getElementById("status").textContent =
-        "Site is up · " + new Date().toLocaleString();
-    </script>
-  </body>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>my-bot · Portal</title>
+  <meta name="description" content="my-bot — flashy static playground on GitHub Pages" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body.home {
+      background: #03040a;
+    }
+    .orb-field {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0.55;
+      animation: floatOrb 14s ease-in-out infinite;
+    }
+    .orb-1 {
+      width: 420px; height: 420px;
+      background: #6366f1;
+      top: -10%; left: -5%;
+      animation-delay: 0s;
+    }
+    .orb-2 {
+      width: 380px; height: 380px;
+      background: #06b6d4;
+      bottom: -15%; right: -8%;
+      animation-delay: -4s;
+    }
+    .orb-3 {
+      width: 280px; height: 280px;
+      background: #ec4899;
+      top: 40%; left: 45%;
+      opacity: 0.35;
+      animation-delay: -8s;
+    }
+    @keyframes floatOrb {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(40px, -30px) scale(1.08); }
+      66% { transform: translate(-30px, 25px) scale(0.95); }
+    }
+    .grid-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse at center, black 20%, transparent 75%);
+      pointer-events: none;
+    }
+    .hero {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 3.5rem 0 2.5rem;
+    }
+    .hero h1 {
+      font-size: clamp(2.6rem, 8vw, 4.5rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      background: linear-gradient(120deg, #fff 20%, #a5b4fc 45%, #67e8f9 70%, #f0abfc 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: shimmer 6s linear infinite;
+    }
+    @keyframes shimmer {
+      to { background-position: 200% center; }
+    }
+    .hero .tagline {
+      margin: 1.25rem auto 0;
+      font-size: 1.05rem;
+    }
+    .cta-row {
+      margin-top: 1.75rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.75rem 1.35rem;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border: 1px solid rgba(255,255,255,0.15);
+      transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1, #06b6d4);
+      border: none;
+      box-shadow: 0 8px 28px rgba(99, 102, 241, 0.35);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 36px rgba(99, 102, 241, 0.5);
+    }
+    .btn-ghost {
+      background: rgba(255,255,255,0.06);
+    }
+    .btn-ghost:hover {
+      background: rgba(255,255,255,0.12);
+      transform: translateY(-2px);
+    }
+    .cards {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .card {
+      position: relative;
+      border-radius: var(--radius);
+      padding: 1.4rem 1.25rem 1.3rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      overflow: hidden;
+      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+      min-height: 160px;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.3s;
+      background: radial-gradient(circle at 30% 20%, var(--glow, #6366f1) 0%, transparent 60%);
+    }
+    .card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(255,255,255,0.22);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.35);
+    }
+    .card:hover::before { opacity: 0.35; }
+    .card .icon {
+      font-size: 1.6rem;
+      margin-bottom: 0.6rem;
+      position: relative;
+    }
+    .card h3 {
+      font-size: 1.15rem;
+      position: relative;
+      margin-bottom: 0.35rem;
+    }
+    .card p {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.55);
+      position: relative;
+    }
+    .card .go {
+      position: absolute;
+      right: 1rem;
+      bottom: 1rem;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.45);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .card.neon { --glow: #22d3ee; }
+    .card.aurora { --glow: #a78bfa; }
+    .card.orbit { --glow: #60a5fa; }
+    .card.pulse { --glow: #f472b6; }
+  </style>
+</head>
+<body class="home">
+  <div class="orb-field" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+  <div class="grid-overlay" aria-hidden="true"></div>
+
+  <nav class="site-nav">
+    <a class="brand" href="index.html"><span class="dot"></span><span class="label">my-bot</span></a>
+    <div class="links">
+      <a class="active" href="index.html">Home</a>
+      <a href="neon.html">Neon</a>
+      <a href="aurora.html">Aurora</a>
+      <a href="orbit.html">Orbit</a>
+      <a href="pulse.html">Pulse</a>
+    </div>
+  </nav>
+
+  <main class="page-wrap">
+    <div class="container">
+      <section class="hero">
+        <p class="eyebrow">GitHub Pages · Static Showcase</p>
+        <h1>my-bot Portal</h1>
+        <p class="tagline">
+          一眼惊艳的多页静态站 · Bold hero, motion, and four visual worlds —
+          Neon · Aurora · Orbit · Pulse
+        </p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="neon.html">Enter Neon →</a>
+          <a class="btn btn-ghost" href="https://github.com/weilan008/my-bot" target="_blank" rel="noopener">Repo</a>
+        </div>
+      </section>
+
+      <section class="cards" aria-label="Destination pages">
+        <a class="card neon" href="neon.html">
+          <div class="icon">◈</div>
+          <h3>Neon</h3>
+          <p>赛博霓虹 · cyan / magenta glow &amp; scanlines</p>
+          <span class="go">Explore</span>
+        </a>
+        <a class="card aurora" href="aurora.html">
+          <div class="icon">✧</div>
+          <h3>Aurora</h3>
+          <p>极光玻璃 · soft blurs &amp; frosted panels</p>
+          <span class="go">Explore</span>
+        </a>
+        <a class="card orbit" href="orbit.html">
+          <div class="icon">◎</div>
+          <h3>Orbit</h3>
+          <p>轨道空间 · rings, planets, hover play</p>
+          <span class="go">Explore</span>
+        </a>
+        <a class="card pulse" href="pulse.html">
+          <div class="icon">▮</div>
+          <h3>Pulse</h3>
+          <p>律动可视化 · bars &amp; heartbeat pulse</p>
+          <span class="go">Explore</span>
+        </a>
+      </section>
+
+      <p class="footer-note">Deployed from <code>site/</code> · weilan008/my-bot</p>
+    </div>
+  </main>
+</body>
 </html>

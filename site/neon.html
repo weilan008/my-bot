@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Neon · my-bot</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body.neon-page {
+      background: #020208;
+      color: #e0f7ff;
+    }
+    .scanlines {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.15) 2px,
+        rgba(0, 0, 0, 0.15) 4px
+      );
+      opacity: 0.35;
+    }
+    .cyber-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background:
+        linear-gradient(rgba(0, 255, 255, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 0, 170, 0.06) 1px, transparent 1px);
+      background-size: 40px 40px;
+      transform: perspective(500px) rotateX(60deg) translateY(-20%) scale(1.8);
+      transform-origin: center top;
+      animation: gridPulse 8s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes gridPulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 0.7; }
+    }
+    .neon-glow {
+      position: fixed;
+      width: 50vw; height: 50vw;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.25;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .neon-glow.cyan { background: #00f0ff; top: -10%; left: -10%; }
+    .neon-glow.magenta { background: #ff00aa; bottom: -15%; right: -10%; }
+    .neon-main {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 2rem 0 1rem;
+    }
+    .neon-title {
+      font-size: clamp(2.8rem, 10vw, 5.5rem);
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #fff;
+      text-shadow:
+        0 0 7px #fff,
+        0 0 20px #0ff,
+        0 0 40px #0ff,
+        0 0 80px #f0f,
+        0 0 120px #f0f;
+      animation: neonFlicker 4s infinite alternate;
+    }
+    @keyframes neonFlicker {
+      0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        text-shadow:
+          0 0 7px #fff,
+          0 0 20px #0ff,
+          0 0 40px #0ff,
+          0 0 80px #f0f,
+          0 0 120px #f0f;
+      }
+      20%, 24%, 55% {
+        text-shadow: 0 0 4px #fff, 0 0 10px #0ff;
+      }
+    }
+    .neon-sub {
+      margin-top: 1rem;
+      font-family: var(--mono);
+      font-size: 0.95rem;
+      color: #67e8f9;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      animation: blink 1.4s step-end infinite;
+    }
+    @keyframes blink {
+      50% { opacity: 0.4; }
+    }
+    .panel-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 2.5rem;
+      position: relative;
+      z-index: 1;
+    }
+    .neon-panel {
+      border: 2px solid #0ff;
+      border-radius: 4px;
+      padding: 1.25rem;
+      background: rgba(0, 20, 40, 0.6);
+      box-shadow:
+        0 0 12px #0ff55,
+        inset 0 0 20px rgba(0, 255, 255, 0.08);
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    }
+    .neon-panel:nth-child(2) {
+      border-color: #f0f;
+      box-shadow: 0 0 12px #f0f55, inset 0 0 20px rgba(255, 0, 170, 0.08);
+    }
+    .neon-panel:nth-child(3) {
+      border-color: #fff;
+      box-shadow: 0 0 12px #fff4, inset 0 0 20px rgba(255, 255, 255, 0.05);
+    }
+    .neon-panel:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 28px currentColor;
+    }
+    .neon-panel h3 {
+      font-size: 1rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+      color: #fff;
+    }
+    .neon-panel p {
+      font-size: 0.85rem;
+      color: rgba(224, 247, 255, 0.7);
+    }
+    .pulse-btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 2.5rem;
+      position: relative;
+      z-index: 1;
+    }
+    .pulse-btn {
+      padding: 0.85rem 1.8rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      border: 2px solid #0ff;
+      background: transparent;
+      color: #0ff;
+      cursor: pointer;
+      border-radius: 2px;
+      animation: btnPulse 2s ease-in-out infinite;
+      transition: background 0.2s, color 0.2s;
+    }
+    .pulse-btn.mag {
+      border-color: #f0f;
+      color: #f0f;
+      animation-delay: 0.5s;
+    }
+    .pulse-btn:hover {
+      background: #0ff;
+      color: #020208;
+      animation: none;
+    }
+    .pulse-btn.mag:hover {
+      background: #f0f;
+      color: #020208;
+    }
+    @keyframes btnPulse {
+      0%, 100% { box-shadow: 0 0 8px currentColor; }
+      50% { box-shadow: 0 0 24px currentColor, 0 0 48px currentColor; }
+    }
+  </style>
+</head>
+<body class="neon-page">
+  <div class="cyber-grid" aria-hidden="true"></div>
+  <div class="neon-glow cyan" aria-hidden="true"></div>
+  <div class="neon-glow magenta" aria-hidden="true"></div>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <nav class="site-nav">
+    <a class="brand" href="index.html"><span class="dot"></span><span class="label">my-bot</span></a>
+    <div class="links">
+      <a href="index.html">Home</a>
+      <a class="active" href="neon.html">Neon</a>
+      <a href="aurora.html">Aurora</a>
+      <a href="orbit.html">Orbit</a>
+      <a href="pulse.html">Pulse</a>
+    </div>
+  </nav>
+
+  <main class="page-wrap">
+    <div class="container">
+      <div class="neon-main">
+        <p class="eyebrow" style="color:#67e8f9">Cyber District 2088</p>
+        <h1 class="neon-title">NEON</h1>
+        <p class="neon-sub">◈ SYSTEM ONLINE ◈</p>
+      </div>
+
+      <div class="panel-row">
+        <div class="neon-panel">
+          <h3>Signal</h3>
+          <p>高对比青紫霓虹 · scanlines &amp; perspective grid</p>
+        </div>
+        <div class="neon-panel">
+          <h3>Circuit</h3>
+          <p>Glow text · flicker · pulse CTAs that breathe</p>
+        </div>
+        <div class="neon-panel">
+          <h3>Uplink</h3>
+          <p>my-bot 的赛博皮肤 · pure CSS, zero CDN risk</p>
+        </div>
+      </div>
+
+      <div class="pulse-btns">
+        <a class="pulse-btn" href="index.html">← Portal</a>
+        <a class="pulse-btn mag" href="aurora.html">Next: Aurora →</a>
+      </div>
+
+      <p class="footer-note">Neon World · my-bot</p>
+    </div>
+  </main>
+</body>
+</html>

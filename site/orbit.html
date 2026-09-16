@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Orbit · my-bot</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body.orbit-page {
+      background: radial-gradient(ellipse at center, #0b1224 0%, #02040c 70%);
+      color: #e2e8f0;
+    }
+    .stars {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background-image:
+        radial-gradient(1px 1px at 20% 30%, #fff, transparent),
+        radial-gradient(1px 1px at 60% 70%, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 40% 80%, #cbd5e1, transparent),
+        radial-gradient(1px 1px at 80% 20%, #fff, transparent),
+        radial-gradient(1px 1px at 10% 60%, #94a3b8, transparent),
+        radial-gradient(1.5px 1.5px at 90% 50%, #fff, transparent),
+        radial-gradient(1px 1px at 50% 10%, #e2e8f0, transparent),
+        radial-gradient(1px 1px at 75% 85%, #fff, transparent);
+      background-size: 100% 100%;
+      animation: twinkle 5s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 1; }
+    }
+    .orbit-stage {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem 0 2rem;
+    }
+    .orbit-stage h1 {
+      font-size: clamp(2.2rem, 6vw, 3.4rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(90deg, #93c5fd, #c4b5fd, #67e8f9);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .orbit-stage .tagline {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .system {
+      position: relative;
+      width: min(420px, 88vw);
+      height: min(420px, 88vw);
+      margin: 0 auto;
+    }
+    .sun {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 56px; height: 56px;
+      margin: -28px 0 0 -28px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #fef08a, #f59e0b 60%, #ea580c);
+      box-shadow: 0 0 40px #f59e0b88, 0 0 80px #f59e0b44;
+      z-index: 5;
+      transition: transform 0.3s;
+      cursor: pointer;
+    }
+    .sun:hover { transform: scale(1.15); }
+    .ring {
+      position: absolute;
+      top: 50%; left: 50%;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .ring-1 { width: 36%; height: 36%; }
+    .ring-2 { width: 58%; height: 58%; }
+    .ring-3 { width: 82%; height: 82%; }
+    .ring-4 { width: 100%; height: 100%; border-style: dashed; }
+    .planet-track {
+      position: absolute;
+      top: 50%; left: 50%;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      animation: spin linear infinite;
+    }
+    .track-1 { width: 36%; height: 36%; animation-duration: 8s; }
+    .track-2 { width: 58%; height: 58%; animation-duration: 14s; animation-direction: reverse; }
+    .track-3 { width: 82%; height: 82%; animation-duration: 22s; }
+    .track-4 { width: 100%; height: 100%; animation-duration: 32s; animation-direction: reverse; }
+    @keyframes spin {
+      to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+    .planet {
+      position: absolute;
+      top: 0; left: 50%;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      cursor: pointer;
+      transition: box-shadow 0.25s, transform 0.25s;
+    }
+    .planet:hover {
+      box-shadow: 0 0 20px currentColor;
+      transform: translate(-50%, -50%) scale(1.35);
+      z-index: 10;
+    }
+    .p1 {
+      width: 14px; height: 14px;
+      background: #94a3b8;
+      color: #94a3b8;
+    }
+    .p2 {
+      width: 22px; height: 22px;
+      background: linear-gradient(135deg, #38bdf8, #2563eb);
+      color: #38bdf8;
+    }
+    .p3 {
+      width: 18px; height: 18px;
+      background: linear-gradient(135deg, #a78bfa, #7c3aed);
+      color: #a78bfa;
+    }
+    .p4 {
+      width: 26px; height: 26px;
+      background: linear-gradient(135deg, #34d399, #059669);
+      color: #34d399;
+      box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.2);
+    }
+    .paused .planet-track { animation-play-state: paused; }
+    .hud {
+      margin-top: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+    .hud button, .hud a {
+      padding: 0.65rem 1.2rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: rgba(15, 23, 42, 0.7);
+      color: #e2e8f0;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .hud button:hover, .hud a:hover {
+      background: rgba(59, 130, 246, 0.25);
+      border-color: #60a5fa;
+    }
+    .info-panel {
+      margin-top: 1.5rem;
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: #94a3b8;
+      min-height: 1.5em;
+      position: relative;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body class="orbit-page">
+  <div class="stars" aria-hidden="true"></div>
+
+  <nav class="site-nav">
+    <a class="brand" href="index.html"><span class="dot"></span><span class="label">my-bot</span></a>
+    <div class="links">
+      <a href="index.html">Home</a>
+      <a href="neon.html">Neon</a>
+      <a href="aurora.html">Aurora</a>
+      <a class="active" href="orbit.html">Orbit</a>
+      <a href="pulse.html">Pulse</a>
+    </div>
+  </nav>
+
+  <main class="page-wrap">
+    <div class="container orbit-stage">
+      <p class="eyebrow">Deep Space · CSS Orbits</p>
+      <h1>Orbit</h1>
+      <p class="tagline">行星环绕 · hover 放大 · 点击恒星可暂停 / 继续</p>
+
+      <div class="system" id="system">
+        <div class="ring ring-1"></div>
+        <div class="ring ring-2"></div>
+        <div class="ring ring-3"></div>
+        <div class="ring ring-4"></div>
+        <div class="planet-track track-1"><div class="planet p1" data-name="Mercury · 水星" title="Mercury"></div></div>
+        <div class="planet-track track-2"><div class="planet p2" data-name="Earth · 地球" title="Earth"></div></div>
+        <div class="planet-track track-3"><div class="planet p3" data-name="Neptune · 海王星" title="Neptune"></div></div>
+        <div class="planet-track track-4"><div class="planet p4" data-name="Verdant · 绿环星" title="Verdant"></div></div>
+        <div class="sun" id="sun" title="Toggle pause"></div>
+      </div>
+
+      <p class="info-panel" id="info">Hover a planet · Click the sun to pause</p>
+
+      <div class="hud">
+        <button type="button" id="toggleBtn">Pause / Resume</button>
+        <a href="index.html">← Home</a>
+        <a href="pulse.html">Pulse →</a>
+      </div>
+
+      <p class="footer-note">Orbit World · my-bot</p>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      var system = document.getElementById("system");
+      var info = document.getElementById("info");
+      var sun = document.getElementById("sun");
+      var btn = document.getElementById("toggleBtn");
+      function toggle() {
+        system.classList.toggle("paused");
+        info.textContent = system.classList.contains("paused")
+          ? "Paused · 轨道已暂停"
+          : "Orbiting · 轨道运行中";
+      }
+      sun.addEventListener("click", toggle);
+      btn.addEventListener("click", toggle);
+      document.querySelectorAll(".planet").forEach(function (p) {
+        p.addEventListener("mouseenter", function () {
+          info.textContent = p.getAttribute("data-name");
+        });
+        p.addEventListener("mouseleave", function () {
+          if (!system.classList.contains("paused")) {
+            info.textContent = "Hover a planet · Click the sun to pause";
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

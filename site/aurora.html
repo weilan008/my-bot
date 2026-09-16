@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aurora · my-bot</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body.aurora-page {
+      background: linear-gradient(160deg, #0f172a 0%, #1e1b4b 40%, #0c4a6e 100%);
+      color: #f1f5f9;
+    }
+    .aurora-blobs {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.55;
+      animation: drift 18s ease-in-out infinite;
+    }
+    .blob.b1 {
+      width: 480px; height: 480px;
+      background: #818cf8;
+      top: -15%; left: 10%;
+    }
+    .blob.b2 {
+      width: 420px; height: 420px;
+      background: #34d399;
+      bottom: -10%; right: 5%;
+      animation-delay: -6s;
+    }
+    .blob.b3 {
+      width: 360px; height: 360px;
+      background: #f472b6;
+      top: 35%; left: 40%;
+      opacity: 0.4;
+      animation-delay: -12s;
+    }
+    .blob.b4 {
+      width: 300px; height: 300px;
+      background: #38bdf8;
+      top: 10%; right: 20%;
+      animation-delay: -3s;
+    }
+    @keyframes drift {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(50px, 40px) scale(1.1); }
+      50% { transform: translate(-40px, 60px) scale(0.92); }
+      75% { transform: translate(30px, -30px) scale(1.05); }
+    }
+    .glass {
+      position: relative;
+      z-index: 1;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(24px) saturate(1.5);
+      -webkit-backdrop-filter: blur(24px) saturate(1.5);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 24px;
+      padding: 2rem 1.75rem;
+      box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+    .aurora-hero {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .aurora-hero h1 {
+      font-size: clamp(2.4rem, 7vw, 3.8rem);
+      font-weight: 700;
+      background: linear-gradient(120deg, #e0e7ff, #a7f3d0, #fbcfe8, #bae6fd);
+      background-size: 300% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: auroraShift 8s ease infinite;
+    }
+    @keyframes auroraShift {
+      0%, 100% { background-position: 0% center; }
+      50% { background-position: 100% center; }
+    }
+    .aurora-hero p {
+      margin-top: 0.85rem;
+      color: rgba(241, 245, 249, 0.7);
+      max-width: 28rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .glass-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.1rem;
+      position: relative;
+      z-index: 1;
+      margin-top: 1.25rem;
+    }
+    .glass-card {
+      padding: 1.5rem;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: transform 0.3s, background 0.3s;
+    }
+    .glass-card:hover {
+      transform: translateY(-8px);
+      background: rgba(255, 255, 255, 0.16);
+    }
+    .glass-card .chip {
+      display: inline-block;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.15);
+      margin-bottom: 0.75rem;
+    }
+    .glass-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.4rem;
+    }
+    .glass-card p {
+      font-size: 0.88rem;
+      color: rgba(241, 245, 249, 0.65);
+    }
+    .float-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      justify-content: center;
+      margin-top: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+    .pill {
+      padding: 0.65rem 1.2rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(12px);
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .pill:hover {
+      transform: scale(1.05);
+      background: rgba(255, 255, 255, 0.22);
+    }
+  </style>
+</head>
+<body class="aurora-page">
+  <div class="aurora-blobs" aria-hidden="true">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+    <div class="blob b4"></div>
+  </div>
+
+  <nav class="site-nav">
+    <a class="brand" href="index.html"><span class="dot"></span><span class="label">my-bot</span></a>
+    <div class="links">
+      <a href="index.html">Home</a>
+      <a href="neon.html">Neon</a>
+      <a class="active" href="aurora.html">Aurora</a>
+      <a href="orbit.html">Orbit</a>
+      <a href="pulse.html">Pulse</a>
+    </div>
+  </nav>
+
+  <main class="page-wrap">
+    <div class="container">
+      <div class="glass aurora-hero">
+        <p class="eyebrow">Glassmorphism · Soft Motion</p>
+        <h1>Aurora</h1>
+        <p>漂浮模糊光晕与磨砂面板 · calm, lush, premium — 极光在窗外缓缓流动</p>
+      </div>
+
+      <div class="glass-grid">
+        <div class="glass-card">
+          <span class="chip">Mist</span>
+          <h3>Frosted Panels</h3>
+          <p>backdrop-filter 打造的磨砂玻璃层，叠在流动色块之上。</p>
+        </div>
+        <div class="glass-card">
+          <span class="chip">Bloom</span>
+          <h3>Floating Blurs</h3>
+          <p>四色光球缓慢漂移，营造 lush 但不刺眼的氛围。</p>
+        </div>
+        <div class="glass-card">
+          <span class="chip">Calm</span>
+          <h3>Breathing UI</h3>
+          <p>Hover 轻抬卡片 · 适合作为 my-bot 的「安静模式」皮肤。</p>
+        </div>
+      </div>
+
+      <div class="float-pills">
+        <a class="pill" href="index.html">← Home</a>
+        <a class="pill" href="neon.html">Neon</a>
+        <a class="pill" href="orbit.html">Orbit →</a>
+      </div>
+
+      <p class="footer-note">Aurora World · my-bot</p>
+    </div>
+  </main>
+</body>
+</html>

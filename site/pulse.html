@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pulse · my-bot</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body.pulse-page {
+      background: #0a0a0f;
+      color: #fdf2f8;
+    }
+    .pulse-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse at 50% 100%, rgba(236, 72, 153, 0.25), transparent 55%),
+        radial-gradient(ellipse at 20% 20%, rgba(139, 92, 246, 0.2), transparent 40%);
+      pointer-events: none;
+    }
+    .pulse-hero {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 1.5rem 0 1rem;
+    }
+    .pulse-hero h1 {
+      font-size: clamp(2.4rem, 7vw, 3.8rem);
+      font-weight: 800;
+      background: linear-gradient(90deg, #f472b6, #c084fc, #22d3ee);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .heartbeat-wrap {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 1.5rem 0 2rem;
+      min-height: 100px;
+    }
+    .heart {
+      width: 64px;
+      height: 64px;
+      background: #ec4899;
+      transform: rotate(-45deg);
+      position: relative;
+      animation: heartbeat 1.2s ease-in-out infinite;
+      box-shadow: 0 0 30px #ec489988;
+    }
+    .heart::before,
+    .heart::after {
+      content: "";
+      position: absolute;
+      width: 64px;
+      height: 64px;
+      background: #ec4899;
+      border-radius: 50%;
+    }
+    .heart::before { top: -32px; left: 0; }
+    .heart::after { top: 0; left: 32px; }
+    @keyframes heartbeat {
+      0%, 100% { transform: rotate(-45deg) scale(1); }
+      15% { transform: rotate(-45deg) scale(1.18); }
+      30% { transform: rotate(-45deg) scale(1); }
+      45% { transform: rotate(-45deg) scale(1.12); }
+      60% { transform: rotate(-45deg) scale(1); }
+    }
+    .viz {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 6px;
+      height: 160px;
+      padding: 0 0.5rem;
+      margin: 0 auto;
+      max-width: 520px;
+    }
+    .bar {
+      flex: 1;
+      max-width: 18px;
+      min-width: 6px;
+      border-radius: 6px 6px 2px 2px;
+      background: linear-gradient(180deg, #22d3ee, #a855f7, #ec4899);
+      transform-origin: bottom;
+      animation: bounce 0.8s ease-in-out infinite alternate;
+      box-shadow: 0 0 12px rgba(236, 72, 153, 0.35);
+    }
+    @keyframes bounce {
+      from { transform: scaleY(0.25); opacity: 0.7; }
+      to { transform: scaleY(1); opacity: 1; }
+    }
+    .controls {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+      margin-top: 2rem;
+    }
+    .controls button,
+    .controls a {
+      padding: 0.7rem 1.3rem;
+      border-radius: 999px;
+      border: 1px solid rgba(244, 114, 182, 0.4);
+      background: rgba(236, 72, 153, 0.15);
+      color: #fce7f3;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .controls button:hover,
+    .controls a:hover {
+      background: rgba(236, 72, 153, 0.35);
+      transform: translateY(-2px);
+    }
+    .meta {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      margin-top: 1.5rem;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: rgba(252, 231, 243, 0.5);
+    }
+    .viz.slow .bar { animation-duration: 1.6s; }
+    .viz.fast .bar { animation-duration: 0.4s; }
+  </style>
+</head>
+<body class="pulse-page">
+  <div class="pulse-bg" aria-hidden="true"></div>
+
+  <nav class="site-nav">
+    <a class="brand" href="index.html"><span class="dot"></span><span class="label">my-bot</span></a>
+    <div class="links">
+      <a href="index.html">Home</a>
+      <a href="neon.html">Neon</a>
+      <a href="aurora.html">Aurora</a>
+      <a href="orbit.html">Orbit</a>
+      <a class="active" href="pulse.html">Pulse</a>
+    </div>
+  </nav>
+
+  <main class="page-wrap">
+    <div class="container">
+      <div class="pulse-hero">
+        <p class="eyebrow">Visualizer · No Audio Needed</p>
+        <h1>Pulse</h1>
+        <p class="tagline" style="margin: 0.75rem auto 0; text-align: center;">
+          心跳 + 频谱条 · CSS 律动 · 可调快慢
+        </p>
+      </div>
+
+      <div class="heartbeat-wrap">
+        <div class="heart" aria-hidden="true"></div>
+      </div>
+
+      <div class="viz" id="viz" aria-label="Fake equalizer bars"></div>
+
+      <div class="controls">
+        <button type="button" id="slowBtn">Slow</button>
+        <button type="button" id="normBtn">Normal</button>
+        <button type="button" id="fastBtn">Fast</button>
+        <a href="index.html">← Home</a>
+        <a href="orbit.html">Orbit</a>
+      </div>
+
+      <p class="meta" id="meta">BPM vibe · Normal</p>
+      <p class="footer-note">Pulse World · my-bot</p>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      var viz = document.getElementById("viz");
+      var meta = document.getElementById("meta");
+      var n = 24;
+      for (var i = 0; i < n; i++) {
+        var b = document.createElement("div");
+        b.className = "bar";
+        b.style.height = 40 + Math.random() * 60 + "%";
+        b.style.animationDelay = (i * 0.07) + "s";
+        b.style.animationDuration = (0.55 + Math.random() * 0.7) + "s";
+        viz.appendChild(b);
+      }
+      function setMode(mode, label) {
+        viz.classList.remove("slow", "fast");
+        if (mode) viz.classList.add(mode);
+        meta.textContent = "BPM vibe · " + label;
+      }
+      document.getElementById("slowBtn").onclick = function () { setMode("slow", "Slow"); };
+      document.getElementById("normBtn").onclick = function () { setMode("", "Normal"); };
+      document.getElementById("fastBtn").onclick = function () { setMode("fast", "Fast"); };
+    })();
+  </script>
+</body>
+</html>
