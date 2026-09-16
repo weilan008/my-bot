@@ -7,6 +7,8 @@
   <link rel="stylesheet" href="styles.css" />
   <style>
     body.pulse-page {
+      --bar-dur: 0.8s;
+      --heart-dur: 1.2s;
       background: #0a0a0f;
       color: #fdf2f8;
     }
@@ -48,7 +50,7 @@
       background: #ec4899;
       transform: rotate(-45deg);
       position: relative;
-      animation: heartbeat 1.2s ease-in-out infinite;
+      animation: heartbeat var(--heart-dur) ease-in-out infinite;
       box-shadow: 0 0 30px #ec489988;
     }
     .heart::before,
@@ -88,7 +90,7 @@
       border-radius: 6px 6px 2px 2px;
       background: linear-gradient(180deg, #22d3ee, #a855f7, #ec4899);
       transform-origin: bottom;
-      animation: bounce 0.8s ease-in-out infinite alternate;
+      animation: bounce var(--bar-dur) ease-in-out infinite alternate;
       box-shadow: 0 0 12px rgba(236, 72, 153, 0.35);
     }
     @keyframes bounce {
@@ -115,12 +117,17 @@
       font-size: 0.85rem;
       cursor: pointer;
       font-family: inherit;
-      transition: background 0.2s, transform 0.2s;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
     }
     .controls button:hover,
     .controls a:hover {
       background: rgba(236, 72, 153, 0.35);
       transform: translateY(-2px);
+    }
+    .controls button.is-active {
+      background: rgba(236, 72, 153, 0.45);
+      box-shadow: 0 0 18px rgba(236, 72, 153, 0.45);
+      border-color: rgba(251, 207, 232, 0.7);
     }
     .meta {
       position: relative;
@@ -131,8 +138,6 @@
       font-size: 0.8rem;
       color: rgba(252, 231, 243, 0.5);
     }
-    .viz.slow .bar { animation-duration: 1.6s; }
-    .viz.fast .bar { animation-duration: 0.4s; }
   </style>
 </head>
 <body class="pulse-page">
@@ -166,9 +171,9 @@
       <div class="viz" id="viz" aria-label="Fake equalizer bars"></div>
 
       <div class="controls">
-        <button type="button" id="slowBtn">Slow</button>
-        <button type="button" id="normBtn">Normal</button>
-        <button type="button" id="fastBtn">Fast</button>
+        <button type="button" id="slowBtn" data-speed="slow">Slow</button>
+        <button type="button" id="normBtn" data-speed="normal" class="is-active">Normal</button>
+        <button type="button" id="fastBtn" data-speed="fast">Fast</button>
         <a href="index.html">← Home</a>
         <a href="orbit.html">Orbit</a>
       </div>
@@ -180,25 +185,34 @@
 
   <script>
     (function () {
+      var root = document.body;
       var viz = document.getElementById("viz");
       var meta = document.getElementById("meta");
+      var speeds = {
+        slow: { bar: "1.7s", heart: "2.1s", label: "Slow" },
+        normal: { bar: "0.8s", heart: "1.2s", label: "Normal" },
+        fast: { bar: "0.32s", heart: "0.55s", label: "Fast" }
+      };
       var n = 24;
       for (var i = 0; i < n; i++) {
         var b = document.createElement("div");
         b.className = "bar";
         b.style.height = 40 + Math.random() * 60 + "%";
         b.style.animationDelay = (i * 0.07) + "s";
-        b.style.animationDuration = (0.55 + Math.random() * 0.7) + "s";
         viz.appendChild(b);
       }
-      function setMode(mode, label) {
-        viz.classList.remove("slow", "fast");
-        if (mode) viz.classList.add(mode);
-        meta.textContent = "BPM vibe · " + label;
+      function setSpeed(key) {
+        var cfg = speeds[key] || speeds.normal;
+        root.style.setProperty("--bar-dur", cfg.bar);
+        root.style.setProperty("--heart-dur", cfg.heart);
+        meta.textContent = "BPM vibe · " + cfg.label;
+        document.querySelectorAll(".controls button[data-speed]").forEach(function (btn) {
+          btn.classList.toggle("is-active", btn.getAttribute("data-speed") === key);
+        });
       }
-      document.getElementById("slowBtn").onclick = function () { setMode("slow", "Slow"); };
-      document.getElementById("normBtn").onclick = function () { setMode("", "Normal"); };
-      document.getElementById("fastBtn").onclick = function () { setMode("fast", "Fast"); };
+      document.getElementById("slowBtn").addEventListener("click", function () { setSpeed("slow"); });
+      document.getElementById("normBtn").addEventListener("click", function () { setSpeed("normal"); });
+      document.getElementById("fastBtn").addEventListener("click", function () { setSpeed("fast"); });
     })();
   </script>
 </body>
