@@ -188,6 +188,7 @@
       var root = document.body;
       var viz = document.getElementById("viz");
       var meta = document.getElementById("meta");
+      var heart = document.querySelector(".heart");
       var speeds = {
         slow: { bar: "1.7s", heart: "2.1s", label: "Slow" },
         normal: { bar: "0.8s", heart: "1.2s", label: "Normal" },
@@ -198,21 +199,45 @@
         var b = document.createElement("div");
         b.className = "bar";
         b.style.height = 40 + Math.random() * 60 + "%";
-        b.style.animationDelay = (i * 0.07) + "s";
+        b.dataset.delay = (i * 0.07) + "s";
         viz.appendChild(b);
       }
+
+      function applyAnim(el, value) {
+        el.style.animation = "none";
+        // Force reflow so the browser drops the old timeline
+        void el.offsetWidth;
+        el.style.animation = value;
+      }
+
       function setSpeed(key) {
         var cfg = speeds[key] || speeds.normal;
         root.style.setProperty("--bar-dur", cfg.bar);
         root.style.setProperty("--heart-dur", cfg.heart);
         meta.textContent = "BPM vibe · " + cfg.label;
+
+        applyAnim(heart, "heartbeat " + cfg.heart + " ease-in-out infinite");
+
+        var bars = viz.querySelectorAll(".bar");
+        for (var i = 0; i < bars.length; i++) {
+          var delay = bars[i].dataset.delay || "0s";
+          applyAnim(
+            bars[i],
+            "bounce " + cfg.bar + " ease-in-out " + delay + " infinite alternate"
+          );
+        }
+
         document.querySelectorAll(".controls button[data-speed]").forEach(function (btn) {
           btn.classList.toggle("is-active", btn.getAttribute("data-speed") === key);
         });
       }
+
       document.getElementById("slowBtn").addEventListener("click", function () { setSpeed("slow"); });
       document.getElementById("normBtn").addEventListener("click", function () { setSpeed("normal"); });
       document.getElementById("fastBtn").addEventListener("click", function () { setSpeed("fast"); });
+
+      // Apply default so inline restart path is used from the start
+      setSpeed("normal");
     })();
   </script>
 </body>
